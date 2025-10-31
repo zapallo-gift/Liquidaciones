@@ -60,7 +60,7 @@ while operacion != "14":
         else :
             confirmacion = int(input(f"Esta seguro de eliminar el empleado {empleados[empleado_a_eliminar]}, 1 = Si, 2 = No: "))
             if confirmacion == 1:
-                empleados.pop(id)
+                empleados.pop(empleado_a_eliminar)
     
     elif operacion == "3":
         for id, datos in empleados.items():
@@ -170,29 +170,39 @@ while operacion != "14":
             confirmacion = input(f"Esta seguro de eliminar el tipo de trabajo con ID {id_puesto_eliminar} y turno {turno_eliminar}, 1 = Si, 2 = No: ")
             if confirmacion == "1":
                 tipo_trabajos.pop((id_puesto_eliminar, turno_eliminar))
+              
+elif operacion == "13":
+    fecha_calcular = input("Ingrese la fecha que quiere calcular: ")
+    id_empleado_calcular = int(input("Ingrese el ID del empleado que quiere calcular: "))
+    turno_calcular = input("Ingrese el turno del empleado que quiere calcular (Mañana o Tarde): ").lower()
 
-    elif operacion == "13":
-        fecha_calcular = input("Ingrese la fecha que quiere calcular: ")
-        id_empleado_calcular = int(input("Ingrese el ID del empleado que quiere calcular: "))
-        turno_calcular = input("Ingrese el turno del empleado que quiere calcular (Mañana o Tarde): ").lower()
+    encontrado = False
+    for id_jornada, datos_jornada in jornada.items():
+        horario_entrada = datos_jornada[0]
+        horario_salida = datos_jornada[1]
 
-        for id_jornada, datos_jornada in jornada.items():
-            horario_entrada = datos_jornada[0]
-            horario_salida = datos_jornada[1]
+        if fecha_calcular == id_jornada[0] and id_empleado_calcular == id_jornada[1]:
+            horas_trabajadas = horario_salida - horario_entrada
+            horas_extra = 0
+          
+            if horas_trabajadas > 8:
+                horas_extra = horas_trabajadas - 8
+                horas_normales = 8
+            else:
+                horas_normales = horas_trabajadas
 
-            if fecha_calcular == id_jornada[0] and id_empleado_calcular == id_jornada[1]:
-                horas_trabajadas = horario_salida - horario_entrada
-
-                if horas_trabajadas > 8:
-                    horas_extra = horas_trabajadas - 8
-                    horas_trabajadas -= horas_extra
-
-                for id_tipo_trabajo, datos_tipo_trabajo in tipo_trabajos.items():
-                    id_puesto = id_tipo_trabajo[0]
-                    turno_puesto = id_tipo_trabajo[1]
-                    sueldo_hora = datos_tipo_trabajo[1]
-                    if id_puesto == id_empleado_calcular and turno_calcular == turno_puesto:
-                        monto_dia = horas_trabajadas * sueldo_hora + horas_extra * (sueldo_hora * 1.5)
-                        print("El monto del dia es: ", monto_dia)
-
+            for id_tipo_trabajo, datos_tipo_trabajo in tipo_trabajos.items():
+                id_puesto = id_tipo_trabajo[0]
+                turno_puesto = id_tipo_trabajo[1]
+                sueldo_hora = datos_tipo_trabajo[1]
+                if id_puesto == id_empleado_calcular and turno_calcular == turno_puesto:
+                    monto_dia = horas_normales * sueldo_hora + horas_extra * (sueldo_hora * 1.5)
+                    print("El monto del dia es: ", monto_dia)
+                    encontrado = True
+                    break
+            break
+    
+    if not encontrado:
+        print("No se encontraron datos para el calculo")
+   
     operacion = input(mensaje)
